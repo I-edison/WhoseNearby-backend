@@ -607,10 +607,7 @@
     <script>
       // ── CONFIG ──────────────────────────────────────────────────────────────────
       // Change this to your actual backend URL when deployed
-      const API =
-        window.location.hostname === "localhost"
-          ? "http://localhost:3000"
-          : "http://localhost:3000"; // ← update before deploying
+      const API = "https://whosenearby-backend.onrender.com"; // ← update before deploying
 
       let token = sessionStorage.getItem("wn_admin_token") || null;
       let allUsers = [];
