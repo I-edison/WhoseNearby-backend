@@ -1,7 +1,7 @@
 // whoseNearby waitlist form — posts to the Node.js backend
 // Replace API_URL below with your real server URL before deploying
 
-const API_URL = "http://localhost:3000"; // ← update this before deploying
+const API_URL = "https://whosenearby-backend.onrender.com"; // ← update this before deploying
 
 const form = document.getElementById("waitlist-form");
 const successBox = document.getElementById("waitlist-success");
