@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>whoseNearby — Admin</title>
+    <style>
+      :root {
+        --green: #1b7a3e;
+        --green-deep: #0f5a28;
+        --green-light: #e8f5ee;
+        --green-mid: #b6dfc4;
+        --ink: #0d2818;
+        --bg: #fafaf7;
+        --card: #ffffff;
+        --gray: #5c6b62;
+        --gray-light: #8a958f;
+        --border: #dde5de;
+        --gold: #d97706;
+        --red: #e24b4a;
+        --red-light: #fcebeb;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        min-height: 100vh;
+      }
+
+      /* Login */
+      .login-screen {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .login-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 40px;
+        width: 100%;
+        max-width: 380px;
+      }
+      .login-logo {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--green);
+        margin-bottom: 6px;
+      }
+      .login-logo span {
+        color: var(--ink);
+      }
+      .login-sub {
+        font-size: 13px;
+        color: var(--gray);
+        margin-bottom: 28px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 16px;
+      }
+      .field label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .field input {
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .field input:focus {
+        border-color: var(--green);
+      }
+      .btn-green {
+        width: 100%;
+        background: var(--green);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.15s;
+      }
+      .btn-green:hover {
+        background: var(--green-deep);
+      }
+      .login-error {
+        color: var(--red);
+        font-size: 13px;
+        margin-top: 10px;
+        display: none;
+      }
+
+      /* Dashboard layout */
+      .dashboard {
+        display: none;
+      }
+      .topbar {
+        background: var(--ink);
+        padding: 14px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .topbar-logo {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--green-mid);
+      }
+      .topbar-logo span {
+        color: #fff;
+      }
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .topbar-label {
+        font-size: 12.5px;
+        color: var(--green-mid);
+      }
+      .btn-logout {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 12.5px;
+        cursor: pointer;
+      }
+
+      .main {
+        padding: 28px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Stats row */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+      .stat-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px 20px;
+      }
+      .stat-num {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--green);
+      }
+      .stat-label {
+        font-size: 12px;
+        color: var(--gray);
+        margin-top: 2px;
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 20px;
+      }
+      .tab {
+        padding: 8px 18px;
+        border-radius: 8px;
+        font-size: 13.5px;
+        font-weight: 500;
+        cursor: pointer;
+        color: var(--gray);
+        background: transparent;
+        border: none;
+      }
+      .tab.active {
+        background: var(--green-light);
+        color: var(--green-deep);
+        font-weight: 600;
+      }
+
+      /* Users panel */
+      .panel {
+        display: none;
+      }
+      .panel.active {
+        display: block;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .toolbar input,
+      .toolbar select {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 13px;
+        outline: none;
+        background: var(--card);
+      }
+      .toolbar input:focus,
+      .toolbar select:focus {
+        border-color: var(--green);
+      }
+      .search-input {
+        flex: 1;
+        min-width: 200px;
+      }
+      .btn-export {
+        background: var(--green);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-left: auto;
+      }
+      .btn-export:hover {
+        background: var(--green-deep);
+      }
+
+      .table-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+      }
+      thead {
+        background: var(--ink);
+        color: #fff;
+      }
+      th {
+        padding: 11px 16px;
+        text-align: left;
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: var(--bg);
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 3px 9px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .badge-customer {
+        background: var(--green-light);
+        color: var(--green-deep);
+      }
+      .badge-provider {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .badge-both {
+        background: #e8f0fe;
+        color: #1a73e8;
+      }
+
+      .btn-send-one {
+        background: transparent;
+        border: 1px solid var(--green-mid);
+        color: var(--green);
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 11.5px;
+        cursor: pointer;
+      }
+      .btn-send-one:hover {
+        background: var(--green-light);
+      }
+
+      .empty-state {
+        padding: 48px;
+        text-align: center;
+        color: var(--gray);
+      }
+
+      /* Email panel */
+      .email-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 28px;
+        max-width: 680px;
+      }
+      .email-card h3 {
+        font-size: 15px;
+        margin-bottom: 18px;
+      }
+      .email-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+      .email-field label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .email-field input,
+      .email-field textarea,
+      .email-field select {
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 13.5px;
+        font-family: inherit;
+        outline: none;
+        resize: vertical;
+      }
+      .email-field input:focus,
+      .email-field textarea:focus,
+      .email-field select:focus {
+        border-color: var(--green);
+      }
+      .email-field textarea {
+        min-height: 140px;
+      }
+      .email-hint {
+        font-size: 12px;
+        color: var(--gray-light);
+        margin-top: 4px;
+      }
+      .email-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-top: 4px;
+      }
+      .btn-send-email {
+        background: var(--green);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 11px 24px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn-send-email:hover {
+        background: var(--green-deep);
+      }
+      .email-status {
+        font-size: 13px;
+        color: var(--green);
+        display: none;
+        font-weight: 500;
+      }
+      .email-status.error {
+        color: var(--red);
+      }
+
+      .recipients-toggle {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      .rtbtn {
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 12.5px;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--gray);
+      }
+      .rtbtn.active {
+        background: var(--green-light);
+        color: var(--green-deep);
+        border-color: var(--green-mid);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- LOGIN -->
+    <div class="login-screen" id="loginScreen">
+      <div class="login-card">
+        <div class="login-logo">whose<span>Nearby</span></div>
+        <div class="login-sub">Admin dashboard · Team access only</div>
+        <form id="loginForm">
+          <div class="field">
+            <label>Username</label>
+            <input type="text" id="username" autocomplete="username" required />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input
+              type="password"
+              id="password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn-green">Sign in</button>
+          <div class="login-error" id="loginError">
+            Incorrect username or password
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard" id="dashboard">
+      <div class="topbar">
+        <div class="topbar-logo">
+          whose<span>Nearby</span>
+          <span
+            style="
+              font-size: 12px;
+              color: rgba(255, 255, 255, 0.4);
+              font-weight: 400;
+              margin-left: 8px;
+            "
+            >Admin</span
+          >
+        </div>
+        <div class="topbar-right">
+          <span class="topbar-label" id="topbarCount">— signups</span>
+          <button class="btn-logout" onclick="logout()">Sign out</button>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-num" id="statTotal">—</div>
+            <div class="stat-label">Total signups</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statCustomers">—</div>
+            <div class="stat-label">Customers</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statProviders">—</div>
+            <div class="stat-label">Providers</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statBoth">—</div>
+            <div class="stat-label">Both</div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" onclick="showTab('users')">
+            Waitlist users
+          </button>
+          <button class="tab" onclick="showTab('email')">Send email</button>
+        </div>
+
+        <!-- USERS PANEL -->
+        <div class="panel active" id="panel-users">
+          <div class="toolbar">
+            <input
+              class="search-input"
+              type="text"
+              placeholder="Search name or contact…"
+              id="searchInput"
+              oninput="filterUsers()"
+            />
+            <select id="filterCity" onchange="filterUsers()">
+              <option value="">All cities</option>
+              <option>Benin City</option>
+              <option>Lagos</option>
+              <option>Abuja</option>
+              <option>Other</option>
+            </select>
+            <select id="filterRole" onchange="filterUsers()">
+              <option value="">All roles</option>
+              <option value="customer">Customer</option>
+              <option value="provider">Provider</option>
+              <option value="both">Both</option>
+            </select>
+            <button class="btn-export" onclick="exportCSV()">Export CSV</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>City</th>
+                  <th>Role</th>
+                  <th>Signed up</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody id="userTable">
+                <tr>
+                  <td colspan="7" class="empty-state">Loading signups…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- EMAIL PANEL -->
+        <div class="panel" id="panel-email">
+          <div class="email-card">
+            <h3>Compose email</h3>
+            <div class="email-field">
+              <label>Send to</label>
+              <div class="recipients-toggle">
+                <button
+                  class="rtbtn active"
+                  id="rt-all"
+                  onclick="setRecipient('all')"
+                >
+                  All signups
+                </button>
+                <button class="rtbtn" id="rt-one" onclick="setRecipient('one')">
+                  Single email
+                </button>
+              </div>
+              <input
+                type="email"
+                id="emailTo"
+                placeholder="recipient@email.com"
+                style="display: none"
+              />
+              <div class="email-hint" id="recipientHint">
+                Will send to all signed-up users who provided an email address.
+                Use {{name}} to personalise.
+              </div>
+            </div>
+            <div class="email-field">
+              <label>Subject</label>
+              <input
+                type="text"
+                id="emailSubject"
+                placeholder="e.g. whoseNearby is almost here!"
+              />
+            </div>
+            <div class="email-field">
+              <label>Message (HTML supported)</label>
+              <textarea
+                id="emailBody"
+                placeholder="Hi {{name}},&#10;&#10;We have exciting news about whoseNearby…"
+              ></textarea>
+              <div class="email-hint">
+                You can use basic HTML tags for formatting. {{name}} is replaced
+                with the recipient's first name.
+              </div>
+            </div>
+            <div class="email-actions">
+              <button class="btn-send-email" onclick="sendEmail()">
+                Send email
+              </button>
+              <div class="email-status" id="emailStatus"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ── CONFIG ──────────────────────────────────────────────────────────────────
+      // Change this to your actual backend URL when deployed
+      const API =
+        window.location.hostname === "localhost"
+          ? "http://localhost:3000"
+          : "http://localhost:3000"; // ← update before deploying
+
+      let token = sessionStorage.getItem("wn_admin_token") || null;
+      let allUsers = [];
+      let recipientMode = "all";
+
+      // ── INIT ────────────────────────────────────────────────────────────────────
+      if (token) showDashboard();
+
+      // ── LOGIN ───────────────────────────────────────────────────────────────────
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const username = document.getElementById("username").value.trim();
+          const password = document.getElementById("password").value;
+          try {
+            const res = await fetch(`${API}/api/admin/login`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password }),
+            });
+            if (!res.ok) throw new Error("Invalid");
+            const data = await res.json();
+            token = data.token;
+            sessionStorage.setItem("wn_admin_token", token);
+            showDashboard();
+          } catch {
+            document.getElementById("loginError").style.display = "block";
+          }
+        });
+
+      async function logout() {
+        await fetch(`${API}/api/admin/logout`, {
+          method: "POST",
+          headers: { "x-admin-token": token },
+        }).catch(() => {});
+        token = null;
+        sessionStorage.removeItem("wn_admin_token");
+        document.getElementById("dashboard").style.display = "none";
+        document.getElementById("loginScreen").style.display = "flex";
+      }
+
+      // ── DASHBOARD ───────────────────────────────────────────────────────────────
+      async function showDashboard() {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        await loadUsers();
+      }
+
+      async function loadUsers() {
+        try {
+          const res = await fetch(`${API}/api/admin/users`, {
+            headers: { "x-admin-token": token },
+          });
+          if (res.status === 401) {
+            logout();
+            return;
+          }
+          const data = await res.json();
+          allUsers = data.users || [];
+          updateStats(allUsers);
+          renderTable(allUsers);
+        } catch {
+          document.getElementById("userTable").innerHTML =
+            '<tr><td colspan="7" class="empty-state">Could not load users. Is the server running?</td></tr>';
+        }
+      }
+
+      function updateStats(users) {
+        const total = users.length;
+        const customers = users.filter((u) => u.role === "customer").length;
+        const providers = users.filter((u) => u.role === "provider").length;
+        const both = users.filter((u) => u.role === "both").length;
+        document.getElementById("statTotal").textContent = total;
+        document.getElementById("statCustomers").textContent = customers;
+        document.getElementById("statProviders").textContent = providers;
+        document.getElementById("statBoth").textContent = both;
+        document.getElementById("topbarCount").textContent =
+          `${total} signup${total !== 1 ? "s" : ""}`;
+      }
+
+      function renderTable(users) {
+        const tbody = document.getElementById("userTable");
+        if (!users.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="7" class="empty-state">No signups yet.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = users
+          .map((u) => {
+            const badgeClass =
+              u.role === "both"
+                ? "badge-both"
+                : u.role === "provider"
+                  ? "badge-provider"
+                  : "badge-customer";
+            const date = u.timestamp
+              ? new Date(u.timestamp).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })
+              : "—";
+            const isEmail = u.contact?.includes("@");
+            return `
+        <tr>
+          <td style="color:var(--gray-light)">${u.id}</td>
+          <td><strong>${u.name || "—"}</strong></td>
+          <td style="color:var(--gray)">${u.contact || "—"}</td>
+          <td>${u.city || "—"}</td>
+          <td><span class="badge ${badgeClass}">${u.role || "—"}</span></td>
+          <td style="color:var(--gray-light);font-size:12.5px">${date}</td>
+          <td>${isEmail ? `<button class="btn-send-one" onclick="prefillEmail('${u.contact}')">Email</button>` : '<span style="color:var(--gray-light);font-size:12px">No email</span>'}</td>
+        </tr>`;
+          })
+          .join("");
+      }
+
+      function filterUsers() {
+        const q = document.getElementById("searchInput").value.toLowerCase();
+        const city = document.getElementById("filterCity").value;
+        const role = document.getElementById("filterRole").value;
+        let results = allUsers;
+        if (q)
+          results = results.filter(
+            (u) =>
+              u.name?.toLowerCase().includes(q) ||
+              u.contact?.toLowerCase().includes(q),
+          );
+        if (city) results = results.filter((u) => u.city === city);
+        if (role) results = results.filter((u) => u.role === role);
+        renderTable(results);
+      }
+
+      function exportCSV() {
+        window.open(`${API}/api/admin/export?token=${token}`, "_blank");
+        // Note: We append token to URL here since window.open can't set headers
+        // The server should also accept token as a query param for this route
+      }
+
+      // ── TABS ────────────────────────────────────────────────────────────────────
+      function showTab(name) {
+        document.querySelectorAll(".tab").forEach((t, i) => {
+          t.classList.toggle("active", ["users", "email"][i] === name);
+        });
+        document
+          .querySelectorAll(".panel")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById(`panel-${name}`).classList.add("active");
+      }
+
+      // ── EMAIL ───────────────────────────────────────────────────────────────────
+      function setRecipient(mode) {
+        recipientMode = mode;
+        document
+          .getElementById("rt-all")
+          .classList.toggle("active", mode === "all");
+        document
+          .getElementById("rt-one")
+          .classList.toggle("active", mode === "one");
+        document.getElementById("emailTo").style.display =
+          mode === "one" ? "block" : "none";
+        document.getElementById("recipientHint").textContent =
+          mode === "all"
+            ? "Will send to all signed-up users who provided an email. Use {{name}} to personalise."
+            : "Enter a single recipient email address.";
+      }
+
+      function prefillEmail(contact) {
+        showTab("email");
+        setRecipient("one");
+        document.getElementById("emailTo").value = contact;
+      }
+
+      async function sendEmail() {
+        const subject = document.getElementById("emailSubject").value.trim();
+        const body = document.getElementById("emailBody").value.trim();
+        const to = document.getElementById("emailTo").value.trim();
+        const status = document.getElementById("emailStatus");
+
+        if (!subject || !body) {
+          status.textContent = "Please fill in subject and message.";
+          status.className = "email-status error";
+          status.style.display = "block";
+          return;
+        }
+        if (recipientMode === "one" && !to) {
+          status.textContent = "Please enter a recipient email.";
+          status.className = "email-status error";
+          status.style.display = "block";
+          return;
+        }
+
+        status.textContent = "Sending…";
+        status.className = "email-status";
+        status.style.display = "block";
+
+        try {
+          const res = await fetch(`${API}/api/admin/email`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-admin-token": token,
+            },
+            body: JSON.stringify({
+              subject,
+              body,
+              to: recipientMode === "one" ? to : undefined,
+              sendToAll: recipientMode === "all",
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Send failed");
+          const sent = data.results
+            ? data.results.filter((r) => r.sent).length
+            : 1;
+          status.textContent =
+            recipientMode === "all" ? `Sent to ${sent} users.` : "Email sent.";
+          status.className = "email-status";
+        } catch (err) {
+          status.textContent = `Error: ${err.message}`;
+          status.className = "email-status error";
+        }
+      }
+    </script>
+  </body>
+</html>
