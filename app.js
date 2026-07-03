@@ -3,6 +3,7 @@
 
 const API_URL = "https://whosenearby-backend.onrender.com"; // ← update this before deploying
 
+
 const form = document.getElementById("waitlist-form");
 const successBox = document.getElementById("waitlist-success");
 const successName = document.getElementById("success-name");
@@ -91,3 +92,5 @@ revealEls.forEach((el) => {
   el.style.transition = "opacity 0.5s ease, transform 0.5s ease";
   observer.observe(el);
 });
+
+app.use(cors({ origin: '*' }));
