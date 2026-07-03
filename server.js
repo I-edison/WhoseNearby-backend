@@ -24,11 +24,11 @@ const PORT = process.env.PORT || 3000;
 const ADMIN_USERS = [
   {
     username: "admin",
-    password: process.env.ADMIN_PASSWORD || "change_this_password",
+    password: process.env.ADMIN_PASSWORD || "admin",
   },
   {
     username: "team",
-    password: process.env.TEAM_PASSWORD || "change_this_too",
+    password: process.env.TEAM_PASSWORD || "admin",
   },
 ];
 
@@ -40,13 +40,13 @@ const EMAIL_CONFIG = {
   port: 587,
   secure: false,
   auth: {
-    user: process.env.EMAIL_USER || "your-email@gmail.com",
-    pass: process.env.EMAIL_PASS || "your-app-password-here",
+    user: process.env.EMAIL_USER || "iyaseeddyzin@gmail.com",
+    pass: process.env.EMAIL_PASS || "kctt rnky srsr mblq",
   },
 };
 
 const FROM_NAME = "whoseNearby";
-const FROM_ADDRESS = process.env.EMAIL_USER || "your-email@gmail.com";
+const FROM_ADDRESS = process.env.EMAIL_USER || "iyaseeddyzin@gmail.com";
 
 // Simple session store (in-memory — fine for 2-3 admins)
 const sessions = new Set();
