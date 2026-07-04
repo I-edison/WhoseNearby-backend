@@ -21,7 +21,7 @@ form.addEventListener("submit", async function (e) {
   if (!name || !contact || !city || !role) return;
 
   submitBtn.disabled = true;
-  submitBtn.textContent = "Joining…";
+  submitBtn.textContent = "Join";
   errorNote.style.color = "";
   errorNote.textContent = "No spam, ever. Just one message when we launch.";
 
