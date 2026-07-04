@@ -1,7 +1,7 @@
 {
   "name": "whosenearby-backend",
   "version": "1.0.0",
-  "description": "whoseNearby waitlist backend — signups, admin dashboard, email",
+  "description": "whoseNearby waitlist backend — signups, admin dashboard, email, PostgreSQL",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -10,7 +10,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "nodemailer": "^6.9.7"
+    "nodemailer": "^6.9.7",
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
