@@ -110,7 +110,11 @@ async function sendEmail({ to, subject, body }) {
       sender: { name: FROM_NAME, email: FROM_ADDRESS },
       to: [{ email: to }],
       subject,
+<<<<<<< HEAD
       html: body,
+=======
+      htmlContent: body,
+>>>>>>> c551d1228f820da3dbbd7a96668e53d6dfebb952
     }),
   });
 
