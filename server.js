@@ -4,7 +4,6 @@
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
-const BREVO_API_KEY = process.env.BREVO_API_KEY;
 //const nodemailer = require('nodemailer');
 
 const app = express();
@@ -110,11 +109,7 @@ async function sendEmail({ to, subject, body }) {
       sender: { name: FROM_NAME, email: FROM_ADDRESS },
       to: [{ email: to }],
       subject,
-<<<<<<< HEAD
-      html: body,
-=======
-      htmlContent: body,
->>>>>>> c551d1228f820da3dbbd7a96668e53d6dfebb952
+      html: body, // ← fixed
     }),
   });
 
