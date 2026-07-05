@@ -27,6 +27,15 @@ async function initDB() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
   `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS sessions (
+      token      TEXT PRIMARY KEY,
+      username   TEXT NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+
   console.log("Database ready");
 }
 
@@ -52,7 +61,14 @@ const EMAIL_CONFIG = {
 const FROM_NAME = "whoseNearby";
 const FROM_ADDRESS = process.env.EMAIL_USER || "iyaseeddyzin@gmail.com";
 
-const sessions = new Set();
+//const sessions = new Set();
+function requireAuth(req, res, next) {
+  const token = req.headers["x-admin-token"];
+  if (!token || !sessions.has(token)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  next();
+}
 
 // ── MIDDLEWARE ────────────────────────────────────────────────────────────────
 app.use(cors({ origin: "*" }));
@@ -62,14 +78,6 @@ app.use(express.static(__dirname));
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function generateToken() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
-}
-
-function requireAuth(req, res, next) {
-  const token = req.headers["x-admin-token"];
-  if (!token || !sessions.has(token)) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-  next();
 }
 
 function toCSV(signups) {
@@ -190,23 +198,28 @@ app.post("/api/signup", async (req, res) => {
 });
 
 // Admin: login
-app.post("/api/admin/login", (req, res) => {
+app.post("/api/admin/login", async (req, res) => {
   const { username, password } = req.body;
   const user = ADMIN_USERS.find(
     (u) => u.username === username && u.password === password,
   );
   if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
   const token = generateToken();
-  sessions.add(token);
+  await pool.query("INSERT INTO sessions (token, username) VALUES ($1, $2)", [
+    token,
+    username,
+  ]);
   res.json({ token });
 });
 
 // Admin: logout
-app.post("/api/admin/logout", requireAuth, (req, res) => {
-  sessions.delete(req.headers["x-admin-token"]);
+app.post("/api/admin/logout", requireAuth, async (req, res) => {
+  await pool.query("DELETE FROM sessions WHERE token = $1", [
+    req.headers["x-admin-token"],
+  ]);
   res.json({ success: true });
 });
-
 // Admin: get all signups with optional filters
 app.get("/api/admin/users", requireAuth, async (req, res) => {
   try {
